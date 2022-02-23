@@ -118,28 +118,4 @@ class _LoginPageState extends State<LoginPage> {
       return errorMessage;
     }
   }
-
-  Future<String> signUp() async {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: emailController.text.trim(),
-              password: passwordController.text.trim());
-      return 'Ok';
-    } on FirebaseAuthException catch (e) {
-      print(e);
-      var errorMessage = 'Authentication failed';
-      if (e.code == 'user-not-found') {
-        errorMessage = 'No user found for that email.';
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-        errorMessage = 'Wrong password provided for that user.';
-      } else if (e.code == 'email-already-in-use') {
-        print('email is already exist.');
-        errorMessage = 'email is already exist.';
-      }
-      return errorMessage;
-    }
-  }
 }
