@@ -17,8 +17,6 @@ class _LoginPageState extends State<LoginPage> {
 
   TextEditingController passwordController = TextEditingController();
 
-  String validValue = 'Ok';
-
   String? userUid;
 
   late final userEmail;
