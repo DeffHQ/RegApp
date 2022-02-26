@@ -22,6 +22,28 @@ class _LoginPageState extends State<LoginPage> {
   String? userUid;
 
   late final userEmail;
+  Future<String> signIn() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim());
+      print(userCredential.user!.uid);
+      userUid = userCredential.user!.uid;
+      userEmail = userCredential.user!.email;
+      return 'Ok';
+    } on FirebaseAuthException catch (e) {
+      var errorMessage = 'Authentication failed';
+      if (e.code == 'user-not-found') {
+        errorMessage = 'No user found for that email.';
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+        errorMessage = 'Wrong password provided for that user.';
+      }
+      return errorMessage;
+    }
+  }
 
   @override
   void dispose() {
@@ -79,16 +101,10 @@ class _LoginPageState extends State<LoginPage> {
               },
             ),
             ElevatedButton(
-                onPressed: () async {
-                  final message = await signIn();
-                  if (!formKey.currentState!.validate()) {
-                    if (validValue == 'Ok') {}
-                  } else {
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //   builder: (context) => FirestorePage(serEmail),
-                    // ));
-                  }
-                },
+                onPressed: () {
+                  signIn();
+                }
+                ,
                 child: Text('Login'))
           ],
         ),
@@ -96,26 +112,5 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<String> signIn() async {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: emailController.text.trim(),
-              password: passwordController.text.trim());
-      print(userCredential.user!.uid);
-      userUid = userCredential.user!.uid;
-      userEmail = userCredential.user!.email;
-      return 'Ok';
-    } on FirebaseAuthException catch (e) {
-      var errorMessage = 'Authentication failed';
-      if (e.code == 'user-not-found') {
-        errorMessage = 'No user found for that email.';
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-        errorMessage = 'Wrong password provided for that user.';
-      }
-      return errorMessage;
-    }
-  }
+
 }
